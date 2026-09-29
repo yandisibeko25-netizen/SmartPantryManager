@@ -14,7 +14,7 @@ import androidx.core.view.WindowInsetsCompat;
 
 import java.util.ArrayList;
 import java.util.Locale;
-
+import android.content.Intent;
 public class SuggestedRecipesActivity extends AppCompatActivity {
 
     private ListView listSuggestedRecipes;
@@ -71,6 +71,34 @@ public class SuggestedRecipesActivity extends AppCompatActivity {
         listSuggestedRecipes.setEmptyView(textNoRecipes);
 
         buttonBackToPantry.setOnClickListener(view -> finish());
+        listSuggestedRecipes.setOnItemClickListener(
+                (parent, view, position, id) -> {
+                    Recipe selectedRecipe =
+                            suggestedRecipes.get(position);
+
+                    Intent intent = new Intent(
+                            SuggestedRecipesActivity.this,
+                            RecipeDetailActivity.class
+                    );
+
+                    intent.putExtra(
+                            "recipe_id",
+                            selectedRecipe.getId()
+                    );
+
+                    intent.putExtra(
+                            "recipe_name",
+                            selectedRecipe.getName()
+                    );
+
+                    intent.putExtra(
+                            "recipe_steps",
+                            selectedRecipe.getSteps()
+                    );
+
+                    startActivity(intent);
+                }
+        );
     }
 
     @Override
