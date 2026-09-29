@@ -21,8 +21,10 @@ public class MainActivity extends AppCompatActivity {
 
     private ListView listPantryItems;
     private TextView textEmptyPantry;
+
     private Button buttonAddIngredient;
     private Button buttonSuggestedRecipes;
+    private Button buttonSettings;
 
     private DatabaseHelper databaseHelper;
     private PantryAdapter pantryAdapter;
@@ -36,12 +38,12 @@ public class MainActivity extends AppCompatActivity {
 
         ViewCompat.setOnApplyWindowInsetsListener(
                 findViewById(R.id.main),
-                (view, insets) -> {
+                (mainView, insets) -> {
                     Insets systemBars = insets.getInsets(
                             WindowInsetsCompat.Type.systemBars()
                     );
 
-                    view.setPadding(
+                    mainView.setPadding(
                             systemBars.left + 24,
                             systemBars.top + 24,
                             systemBars.right + 24,
@@ -54,9 +56,14 @@ public class MainActivity extends AppCompatActivity {
 
         listPantryItems = findViewById(R.id.listPantryItems);
         textEmptyPantry = findViewById(R.id.textEmptyPantry);
-        buttonAddIngredient = findViewById(R.id.buttonAddIngredient);
+
+        buttonAddIngredient =
+                findViewById(R.id.buttonAddIngredient);
         buttonSuggestedRecipes =
                 findViewById(R.id.buttonSuggestedRecipes);
+        buttonSettings =
+                findViewById(R.id.buttonSettings);
+
         databaseHelper = new DatabaseHelper(this);
         pantryItems = new ArrayList<>();
 
@@ -64,31 +71,47 @@ public class MainActivity extends AppCompatActivity {
         listPantryItems.setAdapter(pantryAdapter);
         listPantryItems.setEmptyView(textEmptyPantry);
 
-        buttonAddIngredient.setOnClickListener(view -> {
-            Intent intent = new Intent(
+        buttonAddIngredient.setOnClickListener(clickedView -> {
+            Intent addIntent = new Intent(
                     MainActivity.this,
                     AddEditIngredientActivity.class
             );
-            startActivity(intent);
+
+            startActivity(addIntent);
         });
-        buttonSuggestedRecipes.setOnClickListener(view -> {
-            Intent intent = new Intent(
+
+        buttonSuggestedRecipes.setOnClickListener(clickedView -> {
+            Intent recipeIntent = new Intent(
                     MainActivity.this,
                     SuggestedRecipesActivity.class
             );
 
-            startActivity(intent);
+            startActivity(recipeIntent);
         });
+
+        buttonSettings.setOnClickListener(clickedView -> {
+            Intent settingsIntent = new Intent(
+                    MainActivity.this,
+                    SettingsActivity.class
+            );
+
+            startActivity(settingsIntent);
+        });
+
         listPantryItems.setOnItemClickListener(
-                (parent, view, position, id) -> {
-                    PantryItem selectedItem = pantryItems.get(position);
+                (parent, itemView, position, id) -> {
+                    PantryItem selectedItem =
+                            pantryItems.get(position);
+
                     openEditScreen(selectedItem);
                 }
         );
 
         listPantryItems.setOnItemLongClickListener(
-                (parent, view, position, id) -> {
-                    PantryItem selectedItem = pantryItems.get(position);
+                (parent, itemView, position, id) -> {
+                    PantryItem selectedItem =
+                            pantryItems.get(position);
+
                     showDeleteConfirmation(selectedItem);
                     return true;
                 }
@@ -96,24 +119,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void openEditScreen(PantryItem pantryItem) {
-        Intent intent = new Intent(
+        Intent editIntent = new Intent(
                 MainActivity.this,
                 AddEditIngredientActivity.class
         );
 
-        intent.putExtra("item_id", pantryItem.getId());
-        intent.putExtra("item_name", pantryItem.getName());
-        intent.putExtra(
+        editIntent.putExtra(
+                "item_id",
+                pantryItem.getId()
+        );
+        editIntent.putExtra(
+                "item_name",
+                pantryItem.getName()
+        );
+        editIntent.putExtra(
                 "item_quantity",
                 pantryItem.getQuantity()
         );
-        intent.putExtra("item_unit", pantryItem.getUnit());
-        intent.putExtra(
+        editIntent.putExtra(
+                "item_unit",
+                pantryItem.getUnit()
+        );
+        editIntent.putExtra(
                 "item_expiry",
                 pantryItem.getExpiryDate()
         );
 
-        startActivity(intent);
+        startActivity(editIntent);
     }
 
     private void showDeleteConfirmation(PantryItem pantryItem) {
@@ -126,9 +158,10 @@ public class MainActivity extends AppCompatActivity {
                 )
                 .setNegativeButton("Cancel", null)
                 .setPositiveButton("Delete", (dialog, which) -> {
-                    int rowsDeleted = databaseHelper.deletePantryItem(
-                            pantryItem.getId()
-                    );
+                    int rowsDeleted =
+                            databaseHelper.deletePantryItem(
+                                    pantryItem.getId()
+                            );
 
                     if (rowsDeleted > 0) {
                         Toast.makeText(
@@ -155,18 +188,21 @@ public class MainActivity extends AppCompatActivity {
         Cursor cursor = databaseHelper.getAllPantryItems();
 
         try {
-            int idIndex =
-                    cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_ID);
-            int nameIndex =
-                    cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_NAME);
-            int quantityIndex =
-                    cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_QUANTITY);
-            int unitIndex =
-                    cursor.getColumnIndexOrThrow(DatabaseHelper.COLUMN_UNIT);
-            int expiryIndex =
-                    cursor.getColumnIndexOrThrow(
-                            DatabaseHelper.COLUMN_EXPIRY_DATE
-                    );
+            int idIndex = cursor.getColumnIndexOrThrow(
+                    DatabaseHelper.COLUMN_ID
+            );
+            int nameIndex = cursor.getColumnIndexOrThrow(
+                    DatabaseHelper.COLUMN_NAME
+            );
+            int quantityIndex = cursor.getColumnIndexOrThrow(
+                    DatabaseHelper.COLUMN_QUANTITY
+            );
+            int unitIndex = cursor.getColumnIndexOrThrow(
+                    DatabaseHelper.COLUMN_UNIT
+            );
+            int expiryIndex = cursor.getColumnIndexOrThrow(
+                    DatabaseHelper.COLUMN_EXPIRY_DATE
+            );
 
             while (cursor.moveToNext()) {
                 PantryItem pantryItem = new PantryItem(
