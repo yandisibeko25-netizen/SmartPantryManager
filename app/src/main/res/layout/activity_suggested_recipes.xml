@@ -8,22 +8,20 @@
     android:background="#FFFDF7">
 
     <TextView
-        android:id="@+id/textPantryTitle"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingTop="24dp"
-        android:paddingBottom="12dp"
-        android:text="My Pantry"
+        android:paddingBottom="8dp"
+        android:text="Suggested Recipes"
         android:textColor="#245C3A"
         android:textSize="28sp"
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textPantryDescription"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="16dp"
-        android:text="Keep track of the ingredients you already have."
+        android:text="Recipes you can make using only your current pantry ingredients."
         android:textColor="#555555"
         android:textSize="16sp" />
 
@@ -33,34 +31,27 @@
         android:layout_weight="1">
 
         <ListView
-            android:id="@+id/listPantryItems"
+            android:id="@+id/listSuggestedRecipes"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:divider="@android:color/transparent"
             android:dividerHeight="8dp" />
 
         <TextView
-            android:id="@+id/textEmptyPantry"
+            android:id="@+id/textNoRecipes"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
             android:gravity="center"
-            android:text="Your pantry is empty.&#10;Add your first ingredient."
+            android:text="No recipes match your pantry yet.&#10;Add more ingredients and try again."
             android:textColor="#666666"
             android:textSize="17sp" />
 
     </FrameLayout>
+
     <Button
-        android:id="@+id/buttonSuggestedRecipes"
+        android:id="@+id/buttonBackToPantry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="Suggested Recipes"
-        android:textSize="16sp" />
-    <Button
-        android:id="@+id/buttonAddIngredient"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Add Ingredient"
-        android:textSize="16sp" />
+        android:text="Back to Pantry" />
 
 </LinearLayout>

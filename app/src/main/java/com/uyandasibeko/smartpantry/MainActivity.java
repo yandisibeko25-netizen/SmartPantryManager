@@ -22,6 +22,7 @@ public class MainActivity extends AppCompatActivity {
     private ListView listPantryItems;
     private TextView textEmptyPantry;
     private Button buttonAddIngredient;
+    private Button buttonSuggestedRecipes;
 
     private DatabaseHelper databaseHelper;
     private PantryAdapter pantryAdapter;
@@ -54,7 +55,8 @@ public class MainActivity extends AppCompatActivity {
         listPantryItems = findViewById(R.id.listPantryItems);
         textEmptyPantry = findViewById(R.id.textEmptyPantry);
         buttonAddIngredient = findViewById(R.id.buttonAddIngredient);
-
+        buttonSuggestedRecipes =
+                findViewById(R.id.buttonSuggestedRecipes);
         databaseHelper = new DatabaseHelper(this);
         pantryItems = new ArrayList<>();
 
@@ -69,7 +71,14 @@ public class MainActivity extends AppCompatActivity {
             );
             startActivity(intent);
         });
+        buttonSuggestedRecipes.setOnClickListener(view -> {
+            Intent intent = new Intent(
+                    MainActivity.this,
+                    SuggestedRecipesActivity.class
+            );
 
+            startActivity(intent);
+        });
         listPantryItems.setOnItemClickListener(
                 (parent, view, position, id) -> {
                     PantryItem selectedItem = pantryItems.get(position);
