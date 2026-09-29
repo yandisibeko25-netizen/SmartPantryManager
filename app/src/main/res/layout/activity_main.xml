@@ -50,24 +50,45 @@
 
     </FrameLayout>
     <Button
-        android:id="@+id/buttonSuggestedRecipes"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="Suggested Recipes"
-        android:textSize="16sp" />
-    <Button
-        android:id="@+id/buttonSettings"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="8dp"
-        android:text="Settings"
-        android:textSize="16sp" />
-    <Button
         android:id="@+id/buttonAddIngredient"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginBottom="8dp"
         android:text="Add Ingredient"
         android:textSize="16sp" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:background="#E8F5E9"
+        android:padding="4dp">
+
+        <Button
+            android:id="@+id/buttonPantryHome"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:enabled="false"
+            android:text="Pantry"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/buttonSuggestedRecipes"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Recipes"
+            android:textSize="12sp" />
+
+        <Button
+            android:id="@+id/buttonSettings"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Settings"
+            android:textSize="12sp" />
+
+    </LinearLayout>
 
 </LinearLayout>
