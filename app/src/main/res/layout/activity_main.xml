@@ -23,7 +23,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:paddingBottom="16dp"
-        android:text="Keep track of the ingredients you already have."
+        android:text="Track the ingredients you have. Tap an item to edit it, or press and hold to delete it."
         android:textColor="#555555"
         android:textSize="16sp" />
 
@@ -36,6 +36,7 @@
             android:id="@+id/listPantryItems"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:contentDescription="Saved pantry ingredients"
             android:divider="@android:color/transparent"
             android:dividerHeight="8dp" />
 
@@ -43,12 +44,14 @@
             android:id="@+id/textEmptyPantry"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
+            android:accessibilityLiveRegion="polite"
             android:gravity="center"
             android:text="Your pantry is empty.&#10;Add your first ingredient."
             android:textColor="#666666"
             android:textSize="17sp" />
 
     </FrameLayout>
+
     <Button
         android:id="@+id/buttonAddIngredient"
         android:layout_width="match_parent"
