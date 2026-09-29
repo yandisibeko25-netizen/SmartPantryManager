@@ -12,6 +12,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+
 public class AddEditIngredientActivity extends AppCompatActivity {
 
     private TextView textFormTitle;
@@ -35,12 +39,12 @@ public class AddEditIngredientActivity extends AppCompatActivity {
 
         ViewCompat.setOnApplyWindowInsetsListener(
                 findViewById(R.id.main),
-                (view, insets) -> {
+                (mainView, insets) -> {
                     Insets systemBars = insets.getInsets(
                             WindowInsetsCompat.Type.systemBars()
                     );
 
-                    view.setPadding(
+                    mainView.setPadding(
                             systemBars.left,
                             systemBars.top,
                             systemBars.right,
@@ -52,20 +56,27 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         );
 
         textFormTitle = findViewById(R.id.textFormTitle);
-        editIngredientName = findViewById(R.id.editIngredientName);
+        editIngredientName =
+                findViewById(R.id.editIngredientName);
         editQuantity = findViewById(R.id.editQuantity);
         editUnit = findViewById(R.id.editUnit);
         editExpiryDate = findViewById(R.id.editExpiryDate);
 
-        buttonSaveIngredient = findViewById(R.id.buttonSaveIngredient);
+        buttonSaveIngredient =
+                findViewById(R.id.buttonSaveIngredient);
         buttonCancel = findViewById(R.id.buttonCancel);
 
         databaseHelper = new DatabaseHelper(this);
 
         loadItemForEditing();
 
-        buttonSaveIngredient.setOnClickListener(view -> saveIngredient());
-        buttonCancel.setOnClickListener(view -> finish());
+        buttonSaveIngredient.setOnClickListener(
+                clickedView -> saveIngredient()
+        );
+
+        buttonCancel.setOnClickListener(
+                clickedView -> finish()
+        );
     }
 
     private void loadItemForEditing() {
@@ -80,22 +91,18 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         textFormTitle.setText("Edit Ingredient");
         buttonSaveIngredient.setText("Update Ingredient");
 
-        editIngredientName.setText(
-                getIntent().getStringExtra("item_name")
+        String name = getIntent().getStringExtra("item_name");
+        double quantity = getIntent().getDoubleExtra(
+                "item_quantity",
+                0
         );
-
-        editQuantity.setText(
-                String.valueOf(
-                        getIntent().getDoubleExtra("item_quantity", 0)
-                )
-        );
-
-        editUnit.setText(
-                getIntent().getStringExtra("item_unit")
-        );
-
+        String unit = getIntent().getStringExtra("item_unit");
         String expiryDate =
                 getIntent().getStringExtra("item_expiry");
+
+        editIngredientName.setText(name);
+        editQuantity.setText(String.valueOf(quantity));
+        editUnit.setText(unit);
 
         if (expiryDate != null) {
             editExpiryDate.setText(expiryDate);
@@ -103,13 +110,35 @@ public class AddEditIngredientActivity extends AppCompatActivity {
     }
 
     private void saveIngredient() {
-        String name = editIngredientName.getText().toString().trim();
-        String quantityText = editQuantity.getText().toString().trim();
-        String unit = editUnit.getText().toString().trim().toLowerCase();
-        String expiryDate = editExpiryDate.getText().toString().trim();
+        String name = editIngredientName
+                .getText()
+                .toString()
+                .trim();
+
+        String quantityText = editQuantity
+                .getText()
+                .toString()
+                .trim();
+
+        String unit = editUnit
+                .getText()
+                .toString()
+                .trim()
+                .toLowerCase(Locale.ROOT);
+
+        String expiryDate = editExpiryDate
+                .getText()
+                .toString()
+                .trim();
+
+        if (unit.equals("item")) {
+            unit = "items";
+        }
 
         if (name.isEmpty()) {
-            editIngredientName.setError("Ingredient name is required");
+            editIngredientName.setError(
+                    "Ingredient name is required"
+            );
             editIngredientName.requestFocus();
             return;
         }
@@ -131,7 +160,9 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         }
 
         if (quantity <= 0) {
-            editQuantity.setError("Quantity must be greater than zero");
+            editQuantity.setError(
+                    "Quantity must be greater than zero"
+            );
             editQuantity.requestFocus();
             return;
         }
@@ -143,22 +174,36 @@ public class AddEditIngredientActivity extends AppCompatActivity {
         }
 
         if (!isValidUnit(unit)) {
-            editUnit.setError("Use items, g, kg, ml or l");
+            editUnit.setError(
+                    "Use items, g, kg, ml or l"
+            );
             editUnit.requestFocus();
             return;
         }
 
         if (!expiryDate.isEmpty()
-                && !expiryDate.matches("\\d{4}-\\d{2}-\\d{2}")) {
-            editExpiryDate.setError("Use the format YYYY-MM-DD");
+                && !isValidDate(expiryDate)) {
+            editExpiryDate.setError(
+                    "Enter a real date using YYYY-MM-DD"
+            );
             editExpiryDate.requestFocus();
             return;
         }
 
         if (itemId == -1) {
-            addNewIngredient(name, quantity, unit, expiryDate);
+            addNewIngredient(
+                    name,
+                    quantity,
+                    unit,
+                    expiryDate
+            );
         } else {
-            updateIngredient(name, quantity, unit, expiryDate);
+            updateIngredient(
+                    name,
+                    quantity,
+                    unit,
+                    expiryDate
+            );
         }
     }
 
@@ -182,6 +227,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT
             ).show();
 
+            setResult(RESULT_OK);
             finish();
         } else {
             Toast.makeText(
@@ -213,6 +259,7 @@ public class AddEditIngredientActivity extends AppCompatActivity {
                     Toast.LENGTH_SHORT
             ).show();
 
+            setResult(RESULT_OK);
             finish();
         } else {
             Toast.makeText(
@@ -220,6 +267,23 @@ public class AddEditIngredientActivity extends AppCompatActivity {
                     "Ingredient could not be updated",
                     Toast.LENGTH_SHORT
             ).show();
+        }
+    }
+
+    private boolean isValidDate(String dateText) {
+        SimpleDateFormat dateFormat =
+                new SimpleDateFormat(
+                        "yyyy-MM-dd",
+                        Locale.ROOT
+                );
+
+        dateFormat.setLenient(false);
+
+        try {
+            dateFormat.parse(dateText);
+            return true;
+        } catch (ParseException exception) {
+            return false;
         }
     }
 
